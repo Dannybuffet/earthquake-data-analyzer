@@ -5,7 +5,7 @@ This repository contains a Python script for analyzing earthquake data from a CS
 ## Requirements
 
 - Python 3.x
-- PyTZ
+- Pytz
 
 ## Installation
 
