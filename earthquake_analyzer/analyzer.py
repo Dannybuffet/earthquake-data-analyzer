@@ -37,10 +37,13 @@ class EarthquakeDataAnalyzer:
         """
         Processes the data rows, calculating average magnitudes, earthquakes per day, and earthquakes per location.
         """
-        for row in data_rows:
-            self.calculate_average_magnitudes(row)
-            self.calculate_earthquakes_per_day(row)
-            self.calculate_earthquakes_per_location(row)
+        try:
+            for row in data_rows:
+                self.calculate_average_magnitudes(row)
+                self.calculate_earthquakes_per_day(row)
+                self.calculate_earthquakes_per_location(row)
+        except Exception as e:
+            raise Exception(f"Error processing data: {str(e)}") from e
 
     def calculate_average_magnitudes(self, row):
         """
@@ -117,6 +120,9 @@ class EarthquakeDataAnalyzer:
         """
         Parses the date string and returns a datetime object.
         """
-        date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-        return date
+        try:
+            date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+            return date
+        except Exception as e:
+            raise Exception(f"Error parsing date: {str(e)}") from e
 
