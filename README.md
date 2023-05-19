@@ -11,19 +11,26 @@ This repository contains a Python script for analyzing earthquake data from a CS
 
 1. Clone the repository:
 
-```shell
-git clone https://github.com/dannybuffet/earthquake-data-analyzer.git
+```bash
+git clone https://github.com/dannybuffet/earthquake_data_analizer.git
 ```
 
 2. Navigate to the repository directory:
 
-```shell
-cd repository
+```bash
+cd earthquake_data_analizer
 ```
 
-3. Install the required dependencies:
+3. Set up a virtual environment and activate it:
 
-```shell
+```bash
+python3 -m venv env
+source env/bin/activate
+```
+
+5. Install the required dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -31,16 +38,16 @@ pip install -r requirements.txt
 
 To run the main script and perform earthquake data analysis, use the following command:
 
-```shell
-python main.py
+```bash
+python3 main.py
 ```
 
 This will output the location with the most earthquakes, earthquakes per day in UTC timezone, earthquakes per day in Pacific timezone, and average magnitudes per location.
 
 To run the tests and verify the correctness of the code, use the following command:
 
-```shell
-python tests/test.py
+```bash
+python3 tests/test.py
 ```
 This will execute the unit tests for the classes EarthquakeDataReader, EarthquakeDataHandler, and EarthquakeDataAnalyzer.
 
