@@ -1,6 +1,5 @@
-mport pytz 
+import pytz 
 from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer, EarthquakeDataReader
-
 
 def main():
     filename = "data/earthquake_data.csv"
@@ -13,7 +12,14 @@ def main():
 
         # Process the earthquake data from the CSV.
         data_reader = EarthquakeDataReader.read_csv_file(filename)
-        analyzer.process_data(data_reader)
+
+        for row in data_reader:
+            analyzer.process_data([row])
+
+            # Print average magnitudes for each location.
+            for location, avg_magnitude_data in analyzer.location_avg_magnitudes.items():
+                mean = avg_magnitude_data['mean']
+                print(f"Average magnitude for location '{location}': {mean:.2f}")
 
         # Calculate location with the most earthquakes.
         most_earthquakes_location = analyzer.calculate_location_with_most_earthquakes()
@@ -32,15 +38,6 @@ def main():
         print("Earthquakes per Day in Pacific Timezone:")
         for day, count in earthquakes_per_day_pacific.items():
             print(f"Date: {day}, Count: {count}")
-
-        # Process earthquake data in real-time
-        data_stream = EarthquakeDataReader.read_csv_file(filename)
-        for data_row in data_stream:
-            analyzer.process_data([data_row])
-            # Print average magnitude for each location.
-            for location, avg_magnitude_data in analyzer.location_avg_magnitudes.items():
-                mean = avg_magnitude_data['mean']
-                print(f"Average magnitude for location '{location}': {mean:.2f}")
 
     except FileNotFoundError as e:
         raise FileNotFoundError(f"File '{filename}' not found.") from e
