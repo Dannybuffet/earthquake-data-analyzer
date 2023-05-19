@@ -45,6 +45,13 @@ class EarthquakeDataAnalyzer:
     def calculate_average_magnitudes(self, row):
         """
         Calculates the average magnitudes for each location.
+        The average magnitude is stored instead of the sum.
+
+        By storing the average and updating it incrementally, we avoid the need to store the sum,
+        ensuring memory efficiency and preventing potential memory overflow.
+
+        The average magnitude is calculated by updating the count and mean values for each location source.
+
         """
         try:
             magnitude = float(row[self.magnitude_index])
