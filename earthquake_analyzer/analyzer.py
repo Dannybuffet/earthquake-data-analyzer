@@ -7,12 +7,12 @@ class EarthquakeDataReader:
     @staticmethod
     def read_csv_file(filename):
         """
-        Reads a CSV file and yields rows, skipping the header row.
+        Reads a CSV file and yields rows.
         """
         try:
             with open(filename, 'r') as file:
                 csv_reader = csv.reader(file)
-                next(csv_reader)  # Skip header row
+                next(csv_reader)  
                 for row in csv_reader:
                     yield row
         except FileNotFoundError as e:
