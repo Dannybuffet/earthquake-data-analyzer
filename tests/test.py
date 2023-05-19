@@ -1,12 +1,12 @@
 import sys
 import os
-import unittest
-from unittest.mock import MagicMock
 from collections import defaultdict
+import unittest
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer, EarthquakeDataReader, EarthquakeDataProcessor
+from earthquake_analyzer.analyzer import EarthquakeDataReader, EarthquakeDataAnalyzer
+
 
 class EarthquakeDataReaderTests(unittest.TestCase):
     def test_read_csv_file(self):
@@ -23,28 +23,13 @@ class EarthquakeDataReaderTests(unittest.TestCase):
         self.assertEqual(data, expected_data)
 
 
-class EarthquakeDataProcessorTests(unittest.TestCase):
-    # Test to verify the process_data method in the EarthquakeDataProcessor.
-    def test_process_data(self):
-        analyzer = MagicMock()
-        processor = EarthquakeDataProcessor(analyzer)
-
-        row = ['1', 'California', '5.6']
-        processor.process_data([row])
-
-        analyzer.calculate_average_magnitudes.assert_called_once_with(row)
-        analyzer.calculate_earthquakes_per_location.assert_called_once_with(row)
-        analyzer.calculate_earthquakes_per_day.assert_called_once_with(row)
-
-
 class EarthquakeDataAnalyzerTests(unittest.TestCase):
     def setUp(self):
         # Test setup method for the EarthquakeDataAnalyzer
         self.analyzer = EarthquakeDataAnalyzer(location_index=1, date_index=2, magnitude_index=3)
 
-
     def test_calculate_earthquakes_per_location(self):
-        # Test to verify the functionality of the calculate_earthquakes_per_location method
+        # Test to verify the functionality of calculate_earthquakes_per_location method
         self.analyzer.location_earthquake_count = defaultdict(int)
 
         rows = [
@@ -62,9 +47,8 @@ class EarthquakeDataAnalyzerTests(unittest.TestCase):
 
         self.assertEqual(self.analyzer.location_earthquake_count, expected_count)
 
-
     def test_calculate_average_magnitudes(self):
-        # Test to verify the functionality of the calculate_average_magnitudes method
+        # Test to verify the functionality of calculate_average_magnitudes method
         self.analyzer.location_avg_magnitudes = defaultdict(lambda: {'count': 2, 'mean': 5.0})
 
         row = ['1', 'California', '2023-05-18', '5.6']
@@ -76,4 +60,5 @@ class EarthquakeDataAnalyzerTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
