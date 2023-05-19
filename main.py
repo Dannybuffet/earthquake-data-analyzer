@@ -1,5 +1,5 @@
-from pytz import timezone
-from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer, EarthquakeDataReader, EarthquakeDataHandler
+import pytz 
+from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer, EarthquakeDataReader, EarthquakeDataProcessor
 
 
 def main():
@@ -8,37 +8,45 @@ def main():
     date_index = 0
     magnitude_index = 4
 
-    # Create instances
-    data_reader = EarthquakeDataReader()
-    analyzer = EarthquakeDataAnalyzer(data_reader, location_index, date_index, magnitude_index)
-    handler = EarthquakeDataHandler(analyzer, location_index, magnitude_index)
+    try:
+        analyzer = EarthquakeDataAnalyzer(location_index, date_index, magnitude_index)
+        processor = EarthquakeDataProcessor(analyzer)
 
-    # Calculate location with the most earthquakes
-    most_earthquakes_location = analyzer.analyze_earthquake_data(filename)
-    print(f"Location with Most Earthquakes: {most_earthquakes_location}")
+        # Process the earthquake data from the CSV.
+        data_reader = EarthquakeDataReader.read_csv_file(filename)
+        processor.process_data(data_reader)
 
-    # Calculate earthquakes per day in UTC timezone
-    utc_timezone = timezone('UTC')
-    earthquakes_per_day_utc = analyzer.calculate_earthquakes_per_day(filename, utc_timezone)
-    print("Earthquakes per Day in UTC Timezone:")
-    for day, count in earthquakes_per_day_utc.items():
-        print(f"Date: {day}, Count: {count}")
+        # Calculate location with the most earthquakes.
+        most_earthquakes_location = analyzer.analyze_earthquake_data()
+        print(f"Location with Most Earthquakes: {most_earthquakes_location}")
 
-    # Calculate earthquakes per day in Pacific timezone
-    pacific_timezone = timezone('US/Pacific')
-    earthquakes_per_day_pacific = analyzer.calculate_earthquakes_per_day(filename, pacific_timezone)
-    print("Earthquakes per Day in Pacific Timezone:")
-    for day, count in earthquakes_per_day_pacific.items():
-        print(f"Date: {day}, Count: {count}")
+        # Calculate earthquakes per day in UTC timezone.
+        utc_timezone = pytz.timezone('UTC')
+        earthquakes_per_day_utc = analyzer.analyze_earthquakes_per_day(utc_timezone)
+        print("Earthquakes per Day in UTC Timezone:")
+        for day, count in earthquakes_per_day_utc.items():
+            print(f"Date: {day}, Count: {count}")
 
-    # Process the earthquake data in real-time
-    data_stream = data_reader.read_csv_file(filename)
-    for data_row in data_stream:
-        handler.process_data(data_row)
-        # Print average magnitude for each location after processing each row
-        for location, avg_magnitude_data in analyzer.location_avg_magnitudes.items():
-            mean = avg_magnitude_data['mean']
-            print(f"Average magnitude for location '{location}': {mean:.2f}")
+        # Calculate earthquakes per day in Pacific timezone.
+        pacific_timezone = pytz.timezone('US/Pacific')
+        earthquakes_per_day_pacific = analyzer.analyze_earthquakes_per_day(pacific_timezone)
+        print("Earthquakes per Day in Pacific Timezone:")
+        for day, count in earthquakes_per_day_pacific.items():
+            print(f"Date: {day}, Count: {count}")
+
+        # Process earthquake data in real-time
+        data_stream = EarthquakeDataReader.read_csv_file(filename)
+        for data_row in data_stream:
+            processor.process_data([data_row])
+            # Print average magnitude for each location.
+            for location, avg_magnitude_data in analyzer.location_avg_magnitudes.items():
+                mean = avg_magnitude_data['mean']
+                print(f"Average magnitude for location '{location}': {mean:.2f}")
+
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"File '{filename}' not found.") from e
+    except Exception as e:
+        raise Exception(f"Error processing data: {str(e)}") from e
 
 if __name__ == '__main__':
     main()
