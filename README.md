@@ -49,5 +49,5 @@ To run the tests and verify the correctness of the code, use the following comma
 ```bash
 python3 tests/test.py
 ```
-This will execute the unit tests for the classes EarthquakeDataReader, EarthquakeDataHandler, and EarthquakeDataAnalyzer.
+This will execute the unit tests for the classes EarthquakeDataReader and EarthquakeDataAnalyzer.
 
