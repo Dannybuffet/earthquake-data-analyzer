@@ -12,13 +12,13 @@ This repository contains a Python script for analyzing earthquake data from a CS
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/dannybuffet/earthquake_data_analizer.git
+git clone https://github.com/dannybuffet/earthquake_data_analyzer.git
 ```
 
 2. Navigate to the repository directory:
 
 ```bash
-cd earthquake_data_analizer
+cd earthquake_data_analyzer
 ```
 
 3. Set up a virtual environment and activate it:
