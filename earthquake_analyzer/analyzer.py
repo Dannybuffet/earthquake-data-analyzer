@@ -1,38 +1,20 @@
-import csv
-import pytz
-from datetime import datetime
 from collections import defaultdict
-
-
-class EarthquakeDataReader:
-    @staticmethod
-    def read_csv_file(filename):
-        """
-        Reads a CSV file and yields rows.
-        """
-        try:
-            with open(filename, 'r') as file:
-                csv_reader = csv.reader(file)
-                next(csv_reader)  
-                for row in csv_reader:
-                    yield row
-        except FileNotFoundError as e:
-            raise FileNotFoundError(f"File '{filename}' not found.") from e
-        except Exception as e:
-            raise Exception(f"Error reading CSV file: {str(e)}") from e
+from datetime import datetime
+import pytz
 
 
 class EarthquakeDataAnalyzer:
-    def __init__(self, location_index, date_index, magnitude_index):
+    def __init__(self, location_index, date_index, magnitude_index, timezones):
         """
         Initializes the EarthquakeDataAnalyzer.
         """
         self.location_index = location_index
         self.date_index = date_index
         self.magnitude_index = magnitude_index
+        self.timezones = timezones
         self.location_avg_magnitudes = defaultdict(lambda: {'mean': 0, 'count': 0})
         self.location_earthquake_count = defaultdict(int)
-        self.earthquake_count_per_day = defaultdict(int)
+        self.timezone_earthquake_count = defaultdict(lambda: defaultdict(int))
 
     def process_data(self, data_rows):
         """
@@ -41,8 +23,8 @@ class EarthquakeDataAnalyzer:
         try:
             for row in data_rows:
                 self.calculate_average_magnitudes(row)
-                self.calculate_earthquakes_per_day(row)
                 self.calculate_earthquakes_per_location(row)
+                self.calculate_earthquakes_per_day_by_timezone(row)
         except Exception as e:
             raise Exception(f"Error processing data: {str(e)}") from e
 
@@ -54,7 +36,6 @@ class EarthquakeDataAnalyzer:
         By storing the average and updating it incrementally, we avoid the need to store the sum.
 
         The average magnitude is calculated by updating the count and mean values for each location source.
-
         """
         try:
             magnitude = float(row[self.magnitude_index])
@@ -78,43 +59,43 @@ class EarthquakeDataAnalyzer:
         except Exception as e:
             raise Exception(f"Error calculating earthquakes per location: {str(e)}") from e
 
-    def calculate_earthquakes_per_day(self, row):
+    def get_location_with_most_earthquakes(self):
         """
-        Calculates the number of earthquakes per day.
-        """
-        try:
-            date_str = row[self.date_index]
-            date = self._parse_date(date_str)
-            self.earthquake_count_per_day[date] += 1
-        except Exception as e:
-            raise Exception(f"Error calculating earthquakes per day: {str(e)}") from e
-
-    def calculate_location_with_most_earthquakes(self):
-        """
-        Determines the location with the most earthquakes.
+        Returns the location with the most earthquakes.
         """
         try:
-            location_with_most_earthquakes = max(
-                self.location_earthquake_count, key=self.location_earthquake_count.get
+            most_earthquakes_location = max(
+                self.location_earthquake_count,
+                key=self.location_earthquake_count.get
             )
-            return location_with_most_earthquakes
-        except ValueError as e:
-            raise ValueError("No earthquake data available.") from e
+            return most_earthquakes_location
         except Exception as e:
-            raise Exception(f"Error analyzing earthquake data: {str(e)}") from e
+            raise Exception(f"Error getting location with most earthquakes: {str(e)}") from e
 
-    def calculate_earthquakes_per_day_by_timezone(self, timezone):
+    def calculate_earthquakes_per_day_by_timezone(self, row):
         """
         Analyzes the number of earthquakes per day by timezone.
         """
         try:
-            timezone_earthquake_count = defaultdict(int)
-            for date, count in self.earthquake_count_per_day.items():
-                date_with_timezone = date.astimezone(pytz.timezone(timezone)).date()
-                timezone_earthquake_count[date_with_timezone] += count
-            return timezone_earthquake_count
+            date_str = row[self.date_index]
+            date = self._parse_date(date_str)
+            for timezone in self.timezones:
+                try:
+                    date_with_timezone = date.astimezone(pytz.timezone(timezone)).date()
+                    self.timezone_earthquake_count[timezone][date_with_timezone] += 1
+                except pytz.UnknownTimeZoneError:
+                    raise ValueError(f"Unknown time zone: {timezone}")
         except Exception as e:
-            raise Exception(f"Error analyzing earthquakes per day: {str(e)}") from e
+            raise Exception(f"Error analyzing earthquakes per day by timezone: {str(e)}") from e
+
+    def get_earthquakes_per_day_by_timezone(self, timezone):
+        """
+        Returns the count of earthquakes per day based on the timezone.
+        """
+        try:
+            return self.timezone_earthquake_count[timezone]
+        except Exception as e:
+            raise Exception(f"Error getting earthquakes per day by timezone: {str(e)}") from e
 
     @staticmethod
     def _parse_date(date_str):
@@ -126,4 +107,3 @@ class EarthquakeDataAnalyzer:
             return date
         except Exception as e:
             raise Exception(f"Error parsing date: {str(e)}") from e
-
