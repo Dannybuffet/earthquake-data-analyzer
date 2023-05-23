@@ -1,4 +1,3 @@
-import pytz 
 from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer, EarthquakeDataReader
 
 def main():
@@ -26,14 +25,14 @@ def main():
         print(f"Location with Most Earthquakes: {most_earthquakes_location}")
 
         # Calculate earthquakes per day in UTC timezone.
-        utc_timezone = pytz.timezone('UTC')
+        utc_timezone = 'UTC'
         earthquakes_per_day_utc = analyzer.calculate_earthquakes_per_day_by_timezone(utc_timezone)
         print("Earthquakes per Day in UTC Timezone:")
         for day, count in earthquakes_per_day_utc.items():
             print(f"Date: {day}, Count: {count}")
 
         # Calculate earthquakes per day in Pacific timezone.
-        pacific_timezone = pytz.timezone('US/Pacific')
+        pacific_timezone = 'US/Pacific'
         earthquakes_per_day_pacific = analyzer.calculate_earthquakes_per_day_by_timezone(pacific_timezone)
         print("Earthquakes per Day in Pacific Timezone:")
         for day, count in earthquakes_per_day_pacific.items():
