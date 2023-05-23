@@ -6,8 +6,8 @@ import unittest
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer
-from earthquake_analyzer.reader import EarthquakeDataReader
+from earthquake_analyzer.data_analyzer import EarthquakeDataAnalyzer
+from earthquake_analyzer.data_reader import EarthquakeDataReader
 
 
 class EarthquakeDataReaderTests(unittest.TestCase):
