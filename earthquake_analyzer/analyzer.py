@@ -1,4 +1,5 @@
 import csv
+import pytz
 from datetime import datetime
 from collections import defaultdict
 
@@ -109,7 +110,7 @@ class EarthquakeDataAnalyzer:
         try:
             timezone_earthquake_count = defaultdict(int)
             for date, count in self.earthquake_count_per_day.items():
-                date_with_timezone = date.astimezone(timezone).date()
+                date_with_timezone = date.astimezone(pytz.timezone(timezone)).date()
                 timezone_earthquake_count[date_with_timezone] += count
             return timezone_earthquake_count
         except Exception as e:
