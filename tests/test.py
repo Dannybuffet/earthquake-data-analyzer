@@ -5,12 +5,16 @@ import unittest
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from earthquake_analyzer.analyzer import EarthquakeDataReader, EarthquakeDataAnalyzer
+
+from earthquake_analyzer.analyzer import EarthquakeDataAnalyzer
+from earthquake_analyzer.reader import EarthquakeDataReader
 
 
 class EarthquakeDataReaderTests(unittest.TestCase):
     def test_read_csv_file(self):
-        # Test to verify the read_csv_file method in the EarthquakeDataReader.
+        """
+        Test to verify the read_csv_file method in the EarthquakeDataReader.
+        """
         data_reader = EarthquakeDataReader()
 
         data = list(data_reader.read_csv_file('data/test_data.csv'))
@@ -25,11 +29,15 @@ class EarthquakeDataReaderTests(unittest.TestCase):
 
 class EarthquakeDataAnalyzerTests(unittest.TestCase):
     def setUp(self):
-        # Test setup method for the EarthquakeDataAnalyzer
-        self.analyzer = EarthquakeDataAnalyzer(location_index=1, date_index=2, magnitude_index=3)
+        """
+        Test setup method for the EarthquakeDataAnalyzer
+        """
+        self.analyzer = EarthquakeDataAnalyzer(location_index=1, date_index=2, magnitude_index=3, timezones=None)
 
     def test_calculate_earthquakes_per_location(self):
-        # Test to verify the functionality of calculate_earthquakes_per_location method
+        """
+        Test to verify the functionality of calculate_earthquakes_per_location method
+        """
         self.analyzer.location_earthquake_count = defaultdict(int)
 
         rows = [
@@ -48,7 +56,9 @@ class EarthquakeDataAnalyzerTests(unittest.TestCase):
         self.assertEqual(self.analyzer.location_earthquake_count, expected_count)
 
     def test_calculate_average_magnitudes(self):
-        # Test to verify the functionality of calculate_average_magnitudes method
+        """
+        Test to verify the functionality of calculate_average_magnitudes method
+        """
         self.analyzer.location_avg_magnitudes = defaultdict(lambda: {'count': 2, 'mean': 5.0})
 
         row = ['1', 'California', '2023-05-18', '5.6']
@@ -60,5 +70,3 @@ class EarthquakeDataAnalyzerTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
